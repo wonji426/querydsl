@@ -15,7 +15,7 @@ public class MemberController {
 
     private final MemberJpaRepository memberJpaRepository;
 
-    @GetMapping("/v1/members")
+    @GetMapping("/v1/members") //서치
     public List<MemberTeamDto> searchMemberV1(MemberSearchCondition condition) {
         return memberJpaRepository.search(condition);
     }
