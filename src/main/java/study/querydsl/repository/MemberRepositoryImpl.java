@@ -86,8 +86,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetch();
 
         // 2. count 쿼리
-        // fetchOne()은 Long(객체) 반환, null 가능성 있음
-        Long total = queryFactory
+        JPAQuery<Long> countQuery = queryFactory
                 .select(member.count())
                 .from(member)
                 .leftJoin(member.team, team)
@@ -96,13 +95,10 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                         teamNameEq(condition.getTeamName()),
                         ageGoe(condition.getAgeGoe()),
                         ageLoe(condition.getAgeLoe())
-                )
-                .fetchOne();
+                );
 
-        // null -> 0L 할당, 아니면 값 사용
-        long safeTotal = (total != null) ? total : 0L;
-
-        return new PageImpl<>(content, pageable, safeTotal);
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+//        return new PageImpl<>(content, pageable, safeTotal);
     }
 
     @Override
